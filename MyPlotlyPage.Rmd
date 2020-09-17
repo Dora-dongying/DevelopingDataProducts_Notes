@@ -1,0 +1,51 @@
+---
+title: "MyPlotlyPage"
+author: "Dongying"
+date: "9/17/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Project Instruction
+
+Create a web page presentation using R Markdown that features a plot created with Plotly. Host your webpage on either GitHub Pages, RPubs, or NeoCities. Your webpage must contain the date that you created the document, and it must contain a plot created with Plotly. We would love to see you show off your creativity!
+
+# My Plotly Page: Forest Fires
+
+Let's go and look at some forest fires data. Good luck and stay safe if you live in north California! Let's download and read the data first. I find the data from UCI machine learning database:
+
+```{r cars}
+## Download the CSV file and then unzip it. Check if the files exist before processing.
+filename <- "ForestFires.csv"
+fileURL <- "http://archive.ics.uci.edu/ml/machine-learning-databases/forest-fires/forestfires.csv"
+if (!file.exists(filename)){
+        download.file(fileURL, zipname, method = "curl")
+}
+FireData <- read.csv(filename, sep = ",", header = TRUE)
+```
+
+### Citation Request:
+This dataset is public available for research. The details are described in [Cortez and Morais, 2007]. Please include this citation if you plan to use this database:  
+
+P. Cortez and A. Morais. A Data Mining Approach to Predict Forest Fires using Meteorological Data. In J. Neves, M. F. Santos and J. Machado Eds., New Trends in Artificial Intelligence, Proceedings of the 13th EPIA 2007 - Portuguese Conference on Artificial Intelligence, December, Guimaraes, Portugal, pp. 512-523, 2007. APPIA, ISBN-13 978-989-95618-0-9.
+
+## Some plots by plotly
+We might think that the burned area of the forest (in ha) might has some relations with the fire time, temperature, wind and rain and some other factors. Let's plot some of them out.
+```{r plots}
+library(plotly)
+fig1 <- plot_ly(FireData, x = ~temp, y = ~area)
+fig1 <- fig1 %>% add_lines(name = ~"temperature vs. burned area") ##%>% 
+        ##layout(yaxis = list(type = "log"))
+fig2 <- plot_ly(FireData, x = ~wind, y = ~area)
+fig2 <- fig2 %>% add_lines(name = ~"wind vs. burned area") ##%>% 
+        ##layout(yaxis = list(type = "log"))
+fig3 <- plot_ly(FireData, x = ~RH, y = ~area)
+fig3 <- fig3 %>% add_lines(name = ~"humidity vs. burned area") ##%>% 
+        ##layout(yaxis = list(type = "log"))
+fig <- subplot(fig1, fig2, fig3)
+fig
+```
+Here we include 3 main factors, temperature, wind and humidity. The results match with our intuition, the higher the temperature, the lower humidity, the forest fire can be more horrible. For the wind factor could be more complicated, since wind can help fire to spread, but too strong wind might just put off the fire. 
